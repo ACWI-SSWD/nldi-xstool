@@ -1,0 +1,31 @@
+---
+name: nldi-xstool
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.8
+  - pip
+  # Production dependencies defined here (as well as in requirements.txt)
+  - click
+  - pygeoapi
+  - pygeohydro
+  - py3dep
+  - pygeoogc
+  - pygeoutils
+  - pynhd
+  - folium
+  - lxml
+  - matplotlib
+  - xarray
+  - scipy
+  - dask
+  - netcdf4
+  - bottleneck
+  - jupyterlab
+  - geopandas
+  - descartes
+  - numba
+  - owslib
+  - pygeoapi
+  - pip:
+      - dataretrieval

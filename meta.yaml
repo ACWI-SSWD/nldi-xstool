@@ -1,0 +1,46 @@
+package:
+  name: nldi-xstool
+  version: 0.0.1-dev0
+
+source:
+  path: src
+
+build:
+  number: 0
+  script: "/usr/bin/env python -m pip install . -vv"
+
+requirements:
+  host:
+    - python
+    - pip
+  run:
+    - python
+
+test:
+  # Some packages might need a `test/commands` key to check CLI.
+  # List all the packages/modules that `run_test.py` imports.
+  imports:
+    [] # <-- remove the brackets if actually importing here.
+    # - some_package
+  requires:
+    - pytest
+  commands:
+    - pytest tests/
+
+about:
+  home: https://github.com/rmcd-mscb/nldi-xstool
+  license: MIT
+  license_file: LICENSE.rst
+  summary: "Generate cross-sections using 3DEP supplied topography."
+  # The remaining entries in this section are optional, but recommended.
+  description: "Generate cross-sections using 3DEP supplied topography."
+  doc_url: https://nldi-xstool.readthedocs.io/
+  dev_url: https://github.com/rmcd-mscb/nldi-xstool
+
+extra:
+  recipe-maintainers:
+    # GitHub IDs for maintainers of the recipe.
+    # Always check with the people listed below if they are OK becoming maintainers of the recipe. (There will be spam!)
+    - rmcd-mscb
+  development-status:
+    - Development Status :: 3 - Alpha

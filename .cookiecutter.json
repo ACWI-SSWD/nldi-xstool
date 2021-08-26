@@ -1,0 +1,14 @@
+{
+  "_template": "https://code.usgs.gov/wma/nhgf/pygeoapi-plugin-cookiecutter.git",
+  "author": "Richard McDonald",
+  "description": "Generate cross-sections using 3DEP supplied topography.",
+  "development_status": "Development Status :: 3 - Alpha",
+  "email": "rmcd@usgs.gov",
+  "friendly_name": "Nldi Xstool",
+  "github_user": "rmcd-mscb",
+  "license": "MIT",
+  "package_name": "nldi_xstool",
+  "project_name": "nldi-xstool",
+  "summary": "Generate cross-sections using 3DEP supplied topography.",
+  "version": "0.0.1-dev0"
+}

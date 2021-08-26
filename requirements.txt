@@ -1,0 +1,21 @@
+# Production dependencies, also should be specified in environment.yml
+click
+pygeoapi
+hydrodata
+py3dep
+pygeoogc
+pygeoutils
+pynhd
+folium
+lxml
+matplotlib
+xarray
+dask
+netcdf4
+bottleneck
+jupyterlab
+geopandas
+descartes
+numba
+scipy
+dataretrieval
