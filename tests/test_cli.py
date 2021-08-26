@@ -1,27 +1,10 @@
-#!/usr/bin/env python
-"""Tests for `nldi_xstool` package."""
+"""Tests for `nldi-xstool` CLI."""
 import json
 from tempfile import NamedTemporaryFile
 
 from click.testing import CliRunner
 
 from nldi_xstool.__main__ import main
-
-
-# @pytest.fixture
-# def response():
-#     """Sample pytest fixture.
-
-#     See more at: http://doc.pytest.org/en/latest/fixture.html
-#     """
-#     # import requests
-#     # return requests.get('https://github.com/audreyr/cookiecutter-pypackage')
-
-
-# def test_content(response):
-#     """Sample pytest test function with the pytest fixture as an argument."""
-#     # from bs4 import BeautifulSoup
-#     # assert 'GitHub' in BeautifulSoup(response.content).title.string
 
 
 def test_command_line_interface():
@@ -37,7 +20,7 @@ def test_command_line_interface():
 
 
 def test_xsatpoint():
-    """Test xsatpoint() CLI function."""
+    """Test xsatpoint CLI."""
     runner = CliRunner()
 
     with NamedTemporaryFile(mode="w+") as tf:
@@ -65,7 +48,7 @@ def test_xsatpoint():
 
 
 def test_xsatendpts():
-    """Test xsatendpnts() CLI function."""
+    """Test xsatendpts CLI."""
     runner = CliRunner()
 
     with NamedTemporaryFile(mode="w+") as tf:
@@ -96,7 +79,7 @@ def test_xsatendpts():
 
 
 def test_xsatendpts_wres():
-    """Test xsatendpts() CLI function with variable resolution."""
+    """Test xsatendpts with varying 3DEP resolutions."""
     runner = CliRunner()
     res = ["1m", "3m", "5m", "10m", "30m"]
     for tr in res:
