@@ -1,6 +1,9 @@
 """Generate cross-section using NLDI and user-defined point."""
+from typing import Tuple
+
 import geopandas as gpd
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 from shapely.geometry import LineString
 from shapely.geometry import Point
@@ -17,7 +20,7 @@ class XSGen:
     """
 
     def __init__(
-        self,
+        self: "XSGen",
         point: gpd.GeoDataFrame,
         cl_geom: gpd.GeoDataFrame,
         ny: int,
@@ -57,7 +60,9 @@ class XSGen:
         self.y = np.zeros(self.ny, dtype=np.double)
         self._buildxs()
 
-    def _get_perp_index(self, clx, cly):
+    def _get_perp_index(
+        self: "XSGen", clx: npt.NDArray[np.double], cly: npt.NDArray[np.double]
+    ) -> int:
         mind = 1e6
         id = -1
         for index, p in enumerate(zip(clx, cly)):
@@ -71,7 +76,7 @@ class XSGen:
 
         return id
 
-    def _buildxs(self):
+    def _buildxs(self: "XSGen") -> None:
         clx, cly = self.cl.getinterppts()
         delt = np.double(self.width / (self.ny - 1))
         nm = int((self.ny + 1) / 2)
@@ -85,7 +90,7 @@ class XSGen:
                 self.cl.getphiinterp(index)
             )
 
-    def get_xs(self):
+    def get_xs(self: "XSGen") -> gpd.GeoDataFrame:
         """Get Geopandas DataFrame of generated cross-section.
 
         Returns:
@@ -98,7 +103,9 @@ class XSGen:
         gdf = gpd.GeoDataFrame(df, geometry=df.geometry, crs=self.point.crs)
         return gdf
 
-    def get_xs_points(self):
+    def get_xs_points(
+        self: "XSGen",
+    ) -> Tuple[npt.NDArray[np.double], npt.NDArray[np.double]]:
         """Get cross-section points.
 
         Returns:
@@ -106,7 +113,7 @@ class XSGen:
         """
         return self.x, self.y
 
-    def get_strm_seg_spline(self):
+    def get_strm_seg_spline(self: "XSGen") -> gpd.GeoDataFrame:
         """Get the resulting splined stream-segment.
 
         Returns:

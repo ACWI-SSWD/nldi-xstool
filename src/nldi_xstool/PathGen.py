@@ -2,8 +2,11 @@
 
 Currently only 2 points can make up a path as in a cross-section.
 """
+from typing import Tuple
+
 import geopandas as gpd
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 from shapely.geometry import LineString
 from shapely.geometry import Point
@@ -12,12 +15,12 @@ from shapely.geometry import Point
 class PathGen:
     """Pathgen class."""
 
-    def __init__(self, path_geom, ny) -> None:
-        """Initialize Pathgen class.
+    def __init__(self: "PathGen", path_geom: gpd.GeoDataFrame, ny: int) -> None:
+        """Init PathGen.
 
         Args:
-            path_geom ([type]): [description]
-            ny ([type]): [description]
+            path_geom (gpd.GeoDataFrame): [description]
+            ny (int): [description]
         """
         # print(path_geom, ny)
         self.path_geom = path_geom
@@ -30,7 +33,7 @@ class PathGen:
         self.int_path = None
         self.__buildpath()
 
-    def __buildpath(self):
+    def __buildpath(self: "PathGen") -> None:
         line = self.path_geom.geometry[0]
         spacing = line.length / self.ny
         # print(line, spacing)
@@ -43,7 +46,7 @@ class PathGen:
             d += spacing
             index += 1
 
-    def get_xs(self):
+    def get_xs(self: "PathGen") -> gpd.GeoDataFrame:
         """Get resulting cross-section.
 
         Returns:
@@ -57,7 +60,9 @@ class PathGen:
         gdf = gpd.GeoDataFrame(df, geometry=df.geometry, crs=self.path_geom.crs)
         return gdf
 
-    def get_xs_points(self):
+    def get_xs_points(
+        self: "PathGen",
+    ) -> Tuple[npt.NDArray[np.double], npt.NDArray[np.double]]:
         """Get cross-sectin points.
 
         Returns:

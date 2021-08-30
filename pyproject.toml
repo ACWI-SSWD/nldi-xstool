@@ -13,6 +13,9 @@ source = ["nldi_xstool"]
 show_missing = true
 fail_under = 100
 
+[tool.mypy-numpy."*"]
+allow_untyped_calls = true
+
 [tool.mypy]
 plugins = "numpy.typing.mypy_plugin"
 check_untyped_defs = true
