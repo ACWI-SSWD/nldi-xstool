@@ -10,7 +10,7 @@ from numba import jit
 
 
 @jit
-def channelbuilder(wsdepth, rightss, leftss, widthbottom):
+def channelbuilder(wsdepth, rightss, leftss, widthbottom):  # pragma: no cover
     """.
 
     Builds trapziodal channel station/elevation array given depth,
@@ -29,7 +29,7 @@ def channelbuilder(wsdepth, rightss, leftss, widthbottom):
     return staelev
 
 
-def lineintersection(line1, line2):
+def lineintersection(line1, line2):  # pragma: no cover
     """lineintersection.
 
     Args:
@@ -58,7 +58,7 @@ def lineintersection(line1, line2):
 
 
 @jit
-def polygon_area(corners):
+def polygon_area(corners):  # pragma: no cover
     """polygon_area.
 
     Args:
@@ -77,7 +77,7 @@ def polygon_area(corners):
 
 
 @jit
-def channel_perimeter(corners):  # noqa N806
+def channel_perimeter(corners):  # noqa D103 # pragma: no cover
     p = 0.0
     for i in range(len(corners) - 1):
         p += np.sqrt(
@@ -89,7 +89,7 @@ def channel_perimeter(corners):  # noqa N806
     return p
 
 
-def flow_est(wselev, n, slope, staelev, units):  # noqa N806
+def flow_est(wselev, n, slope, staelev, units):  # noqa N806  # pragma: no cover
     """[summary].
 
     Estimates uniform flow using the Manning equation for

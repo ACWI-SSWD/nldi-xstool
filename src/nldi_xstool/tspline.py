@@ -5,7 +5,7 @@ Code based on Fortran code developed by Jonathan Nelson at USGS.
 import numpy as np
 
 
-def tspline(x, y, n, xout, yout, iout, sigma, yp, temp):
+def tspline(x, y, n, xout, yout, iout, sigma, yp, temp) -> None:
     """Tensioned spline.
 
     :param x: double

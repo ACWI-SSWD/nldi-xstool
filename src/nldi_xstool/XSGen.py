@@ -16,16 +16,22 @@ class XSGen:
     calculated cross-section perpendicular from sline.
     """
 
-    def __init__(self, point, cl_geom, ny, width, tension=10.0) -> None:
-        """Initialize XSGen class.
+    def __init__(
+        self,
+        point: gpd.GeoDataFrame,
+        cl_geom: gpd.GeoDataFrame,
+        ny: int,
+        width: float,
+        tension: float = 10.0,
+    ) -> None:
+        """Build cross-section using NLDI based on a point near a stream-segment to NHD.
 
         Args:
-            point (list): List of lon lat point
-            cl_geom (Geopandas DataFrame): GeoDataFrame of centerline.
-            ny (int): Number of points in cross-section.
-            width (float): Width of cross-section.
-            tension (float, optional): tension in tensioned spline used to generate spline of centerline geometry.
-                Defaults to 10.0.
+            point (gpd.GeoDataFrame): [description]
+            cl_geom (gpd.GeoDataFrame): [description]
+            ny (int): [description]
+            width (float): [description]
+            tension (float, optional): [description]. Defaults to 10.0.  # noqa DAR103
         """
         self.cl_geom = cl_geom
         self.point = point

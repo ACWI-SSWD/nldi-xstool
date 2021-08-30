@@ -26,7 +26,7 @@ class HPoint(Point):  # noqa D101
         super().__init__(*args, **kwargs)
 
     def __hash__(self):  # noqa D101
-        return hash(tuple(self.coords))
+        return hash(tuple(self.coords))  # pragma: no cover
 
 
 def dataframe_to_geodataframe(df, crs):  # noqa D103
@@ -94,7 +94,7 @@ def getxsatendpts(path, numpts, crs="epsg:4326", file=None, res=10):
             file.write(gpdsi.to_json())
             file.close()
             return 0
-        else:
+        else:  # pragma: no cover
             with open(file, "w") as f:
                 f.write(gpdsi.to_json())
                 f.close()
@@ -130,7 +130,7 @@ def getxsatpoint(point, numpoints, width, file=None, res=10):
     gpd_pt.to_crs(epsg=3857, inplace=True)
     try:
         comid = __get_cid_from_lonlat(point)
-    except Exception as ex:
+    except Exception as ex:  # pragma: no cover
         # print(f'Error: {ex} unable to find comid - check lon lat coords')
         sys.exit(f"Error: {ex} unable to find comid - check lon lat coords")
     # print(f'comid = {comid}')
@@ -162,14 +162,14 @@ def getxsatpoint(point, numpoints, width, file=None, res=10):
             file.write(gpdsi.to_json())
             file.close()
             return 0
-        else:
+        else:  # pragma: no cover
             with open(file, "w") as f:
                 f.write(gpdsi.to_json())
                 f.close()
             # gpdsi.to_file(file, driver="GeoJSON")
             return 0
     else:
-        return gpdsi
+        return gpdsi  # pragma: no cover
 
 
 def __lonlat_to_point(lon, lat):  # noqa D103
@@ -191,13 +191,13 @@ def __get_cid_from_lonlat(point):
         jres = response.json()
         comid = jres["features"][0]["properties"]["comid"]
         return comid
-    except requests.exceptions.RequestException as err:
+    except requests.exceptions.RequestException as err:  # pragma: no cover
         print("OOps: Something Else", err)
-    except requests.exceptions.HTTPError as errh:
+    except requests.exceptions.HTTPError as errh:  # pragma: no cover
         print("Http Error:", errh)
-    except requests.exceptions.ConnectionError as errc:
+    except requests.exceptions.ConnectionError as errc:  # pragma: no cover
         print("Error Connecting:", errc)
-    except requests.exceptions.Timeout as errt:
+    except requests.exceptions.Timeout as errt:  # pragma: no cover
         print("Timeout Error:", errt)
-    except Exception as ex:
+    except Exception as ex:  # pragma: no cover
         raise ex

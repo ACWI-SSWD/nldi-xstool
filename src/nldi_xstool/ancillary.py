@@ -226,7 +226,7 @@ def get_dem(bbox, res_type):
 # The function to loop thru all resolutions and submit queries
 
 
-def query_dems(shape_type, coords, width=100):
+def query_dems(shape_type, coords, width=100):  # pragma: no cover
     """Query DEM for available resolutions.
 
     Queries 3DEP 3DEPElevationIndex and returns of dictionary of available

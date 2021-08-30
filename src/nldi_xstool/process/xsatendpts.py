@@ -4,7 +4,7 @@ import time
 
 from pygeoapi.process.base import BaseProcessor
 
-from nldi_xstool import getxsatendpts
+from nldi_xstool.nldi_xstool import getxsatendpts
 
 
 LOGGER = logging.getLogger(__name__)

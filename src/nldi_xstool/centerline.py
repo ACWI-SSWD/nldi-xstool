@@ -1,5 +1,10 @@
 """Centerline."""
+from typing import Any
+from typing import Tuple
+
+import geopandas as gpd
 import numpy as np
+import numpy.typing as npt
 
 from .tspline import tspline
 
@@ -11,11 +16,13 @@ class Centerline:
     with inherited class curvilinear grid
     """
 
-    def __init__(self, center_shp, nx, tension):
+    def __init__(
+        self: "Centerline", center_shp: gpd.GeoDataFrame, nx: int, tension: float
+    ) -> None:
         """Init Centerline class.
 
         Args:
-            center_shp (shp): centerline shape
+            center_shp (gpd.GeoDataFrame): centerline shape
             nx (int): Number of interpolatin points.
             tension (float): Centerline tension-spline interpolation tension (.1 - 100.)
         """
@@ -38,7 +45,7 @@ class Centerline:
         self.__initialize()
         self.__getspline(nx, self.tension)
 
-    def __initialize(self):
+    def __initialize(self: "Centerline") -> None:
         tx = []
         ty = []
         for _index, row in self.gpdata.iterrows():
@@ -60,7 +67,9 @@ class Centerline:
     # def getlength(self): #
     #     return
 
-    def getpoints(self):
+    def getpoints(
+        self: "Centerline",
+    ) -> Tuple[npt.NDArray[np.double], npt.NDArray[np.double]]:
         """Get centerline points.
 
         Returns:
@@ -68,16 +77,18 @@ class Centerline:
         """
         return self.x, self.y
 
-    def getinterppts(self):
+    def getinterppts(self) -> Tuple[npt.NDArray[np.double], npt.NDArray[np.double]]:
         """Get interpolated centerline points."""
         return self.xo_interp, self.yo_interp
 
-    def getinterppts_dyn(self, numinterppts, tension):
+    def getinterppts_dyn(
+        self: "Centerline", numinterppts: int, tension: float
+    ) -> Tuple[npt.NDArray[np.double], npt.NDArray[np.double]]:
         """Get interpolated centerline points in a when user moving points interactively.
 
         Args:
-            numinterppts ([type]): [description]
-            tension ([type]): [description]
+            numinterppts (int): [description]
+            tension (float): [description]
 
         Returns:
             [type]: [description]
@@ -86,10 +97,10 @@ class Centerline:
         self.__getspline(numinterppts, tension)
         return self.xo_interp, self.yo_interp
 
-    def getphiinterp(self, index):  # noqa D102
+    def getphiinterp(self: "Centerline", index: int) -> Any:  # noqa D102
         return self.phi_interp[index]
 
-    def __getspline(self, numinterppts, tension):
+    def __getspline(self: "Centerline", numinterppts: int, tension: float) -> None:
         self.numInterpPts = numinterppts
         self.tension = tension
         self.xo_interp = np.zeros(self.numInterpPts)
@@ -125,19 +136,19 @@ class Centerline:
             self.yp = np.zeros(3)
             self.temp = np.zeros(3)
             sitmp = np.zeros(3)
-            sitmp = np.append(sitmp, [self.si[0]])
-            sitmp = np.append(sitmp, [self.si[1] / 2])
-            sitmp = np.append(sitmp, self.si[1])
+            sitmp = np.append(sitmp, [self.si[0]])  # type: ignore
+            sitmp = np.append(sitmp, [self.si[1] / 2])  # type: ignore
+            sitmp = np.append(sitmp, self.si[1])  # type: ignore
 
             txctmp = np.zeros(3)
-            txctmp = np.append(txctmp, self.x[0])
-            txctmp = np.append(txctmp, self.x[0] + (self.x[1] - self.x[0]) / 2.0)
-            txctmp = np.append(txctmp, self.x[1])
+            txctmp = np.append(txctmp, self.x[0])  # type: ignore
+            txctmp = np.append(txctmp, self.x[0] + (self.x[1] - self.x[0]) / 2.0)  # type: ignore
+            txctmp = np.append(txctmp, self.x[1])  # type: ignore
 
             tyctmp = np.zeros(3)
-            tyctmp = np.append(tyctmp, self.y[0])
-            tyctmp = np.append(tyctmp, self.y[0] + (self.y[1] - self.y[0]) / 2.0)
-            tyctmp = np.append(tyctmp, self.y[1])
+            tyctmp = np.append(tyctmp, self.y[0])  # type: ignore
+            tyctmp = np.append(tyctmp, self.y[0] + (self.y[1] - self.y[0]) / 2.0)  # type: ignore
+            tyctmp = np.append(tyctmp, self.y[1])  # type: ignore
 
             tspline(
                 sitmp,
@@ -186,7 +197,7 @@ class Centerline:
             )
         self.__calc_curvature()
 
-    def __calc_curvature(self):
+    def __calc_curvature(self: "Centerline") -> None:
         for i in range(1, self.numInterpPts):
             dx = self.xo_interp[i] - self.xo_interp[i - 1]
             dy = self.yo_interp[i] - self.yo_interp[i - 1]
@@ -198,7 +209,7 @@ class Centerline:
             else:
                 self.phi_interp[i] = np.arctan2(dy, dx)
         self.phi_interp[0] = (2.0 * self.phi_interp[1]) - self.phi_interp[2]
-        scals = self.stot / (self.numInterpPts - 1)
+        scals: np.double = self.stot / (self.numInterpPts - 1)
         for i in range(1, self.numInterpPts):
             dx = self.xo_interp[i] - self.xo_interp[i - 1]
             dphi = np.fabs(self.phi_interp[i]) - np.fabs(self.phi_interp[i - 1])
