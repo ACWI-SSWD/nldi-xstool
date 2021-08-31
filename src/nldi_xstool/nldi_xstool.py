@@ -3,6 +3,7 @@
 import sys
 from typing import Any
 from typing import List
+from typing import Optional
 from typing import Tuple
 
 import geopandas as gpd
@@ -51,8 +52,8 @@ def getxsatendpts(
     path: List[Tuple[float, float]],
     numpts: int,
     crs: str = "epsg:4326",
-    file: str = "",
-    res: int = 10,
+    file: Optional[Any] = None,
+    res: Optional[int] = 10,
 ) -> Any:
     """Get cross-section at user defined endpoints.
 
@@ -122,7 +123,11 @@ def getxsatendpts(
 
 
 def getxsatpoint(
-    point: List[float], numpoints: int, width: float, file: str = "", res: int = 10
+    point: List[float],
+    numpoints: int,
+    width: float,
+    file: Optional[Any] = None,
+    res: Optional[int] = 10,
 ) -> Any:
     """Get cross-section at user defined point.
 

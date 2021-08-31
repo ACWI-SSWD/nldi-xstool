@@ -1,5 +1,6 @@
 """Command-line interface."""
 import sys
+from typing import Any
 from typing import Optional
 from typing import Tuple
 
@@ -16,7 +17,7 @@ resdict = {"1m": 1, "3m": 3, "5m": 5, "10m": 10, "30m": 30, "60m": 60}
 # https://gis.stackexchange.com/questions/363221/how-do-you-validate-longitude-and-latitude-coordinates-in-python/378885#378885
 
 
-def valid_lonlat(ctx, param, value) -> Optional[Tuple[float, float]]:
+def valid_lonlat(ctx: Any, param: Any, value: Any) -> tuple[float, ...]:
     """This validates a lat and lon.
 
     This validates a lat and lonpoint can be located
@@ -44,21 +45,22 @@ def valid_lonlat(ctx, param, value) -> Optional[Tuple[float, float]]:
     # would not provide any corrected values
     try:
         if lon_lat_bounds.intersects(lon_lat_point):
-            return tuple((lon, lat))
+            retval = tuple((lon, lat))
             # return lon, lat
     except ValueError:
         msg = f"Not valid lon lat pair: {lon, lat}"
         raise click.BadParameter(msg)
+    return retval
 
 
 class NLDIXSTool:
     """Simple class to handle global crs."""
 
-    def __init__(self):
+    def __init__(self: "NLDIXSTool") -> None:
         """Init NLDIXSTool."""
         self.out_crs = "epsg:4326"
 
-    def setoutcrs(self, out_crs="epsg:4326"):
+    def setoutcrs(self: "NLDIXSTool", out_crs: Optional[str] = "epsg:4326") -> None:
         """Set the CRS for output.
 
         Args:
@@ -66,7 +68,7 @@ class NLDIXSTool:
         """
         self.out_crs = out_crs
 
-    def outcrs(self):
+    def outcrs(self: "NLDIXSTool") -> str:
         """Get the output CRS.
 
         Returns:
@@ -74,7 +76,7 @@ class NLDIXSTool:
         """
         return self.out_crs
 
-    def __repr__(self):
+    def __repr__(self: "NLDIXSTool") -> str:
         """Representation.
 
         Returns:
@@ -86,15 +88,15 @@ class NLDIXSTool:
 pass_nldi_xstool = click.make_pass_decorator(NLDIXSTool)
 
 
-@click.group()
+@click.group()  # type: ignore
 @click.option(
     "--outcrs",
     default="epsg:4326",
     help="Projection CRS to return cross-section geometry: default is epsg:4326",
-)
-@click.version_option("0.1")
-@click.pass_context
-def main(ctx, outcrs):
+)  # type: ignore
+@click.version_option("0.1")  # type: ignore
+@click.pass_context  # type: ignore
+def main(ctx: Any, outcrs: str) -> int:
     """nldi-xstooln is a command line tool to for elevation-based services to the NLDI."""
     ctx.obj = NLDIXSTool()
     ctx.obj.setoutcrs(outcrs)
@@ -104,14 +106,14 @@ def main(ctx, outcrs):
 # XS command at point with NHD
 
 
-@main.command()
+@main.command()  # type: ignore
 @click.option(
     "-f",
     "--file",
     default=None,
     type=click.File("w"),
     help="enter path and filenmae for json ouput",
-)
+)  # type: ignore
 @click.option(
     "-ll",
     "--lonlat",
@@ -120,41 +122,58 @@ def main(ctx, outcrs):
     type=tuple((float, float)),
     callback=valid_lonlat,
     help="format lon,lat (x,y) as floats for example: -103.8011 40.2684",
-)
+)  # type: ignore
 @click.option(
     "-n", "--numpoints", default=101, type=int, help="number of points in cross-section"
-)
+)  # type: ignore
 @click.option(
     "-w", "--width", default=1000.0, type=float, help="width of cross-section"
-)
+)  # type: ignore
 @click.option(
     "-r",
     "--resolution",
     type=click.Choice(["1m", "3m", "5m", "10m", "30m", "60m"], case_sensitive=False),
     default="10m",
     help="Resolution of DEM used.  Note: 3DEP provides server side interpolatin given best available data",
-)
-@click.option("-v", "--verbose", default=False, type=bool, help="verbose ouput")
-@pass_nldi_xstool
-def xsatpoint(nldi_xstool, lonlat, numpoints, width, resolution, file, verbose):
-    """Get cross-section at user define point.
+)  # type: ignore
+@click.option("-v", "--verbose", default=False, type=bool, help="verbose ouput")  # type: ignore
+@pass_nldi_xstool  # type: ignore
+def xsatpoint(
+    nldi_xstool: "NLDIXSTool",
+    lonlat: Tuple[float, float],
+    numpoints: int,
+    width: float,
+    resolution: str,
+    file: Any,
+    verbose: bool,
+):
+    """[summary].
 
-    Finds nearest stream-segment using NLDI and projects a cross-section at the intersection of the point and
-    stream segment given the user defined width, number of points, and resolution.
+    Parameters
+    ----------
+    nldi_xstool : NLDIXSTool
+        [description]
+    lonlat : Tuple[float, float]
+        [description]
+    numpoints : int
+        [description]
+    width : float
+        [description]
+    resolution : str
+        [description]
+    file : Any
+        [description]
+    verbose : bool
+        [description]
 
-    Args:
-        nldi_xstool (class): nldi-xstool
-        lonlat (list): list containing lon and lat
-        numpoints (int): number of points in cross-section
-        width (float): Width of cross-section
-        resolution (int): Resolution of returned 3DEP elevation - does not garuntee that the underlying resolution is
-        equivalent.
-        file (str): File path and name of output
-        verbose (bool): Add verbose output
-
-    Returns:
-        json: geojson of cross-section
+    Returns
+    -------
+    [type]
+        [description]
     """
+    coord = []
+    coord.append(lonlat[0])
+    coord.append(lonlat[1])
     x = lonlat[0]  # noqa DAR003
     y = lonlat[1]
     nl = "\n"
@@ -168,7 +187,7 @@ def xsatpoint(nldi_xstool, lonlat, numpoints, width, resolution, file, verbose):
         )
     # print(tuple(latlon))
     xs = getxsatpoint(
-        point=tuple((x, y)),
+        point=coord,
         numpoints=numpoints,
         width=width,
         file=file,
@@ -182,24 +201,24 @@ def xsatpoint(nldi_xstool, lonlat, numpoints, width, resolution, file, verbose):
 # XS command at user defined endpoints
 
 
-@main.command()
+@main.command()  # type: ignore
 @click.option(
     "-f", "--file", default=None, type=click.File("w"), help="Output json file"
-)
+)  # type: ignore
 @click.option(
     "-s",
     "--startpt",
     required=True,
     type=tuple((float, float)),
     help="format x y pair as floats for example: -103.801134 40.267335",
-)
+)  # type: ignore
 @click.option(
     "-e",
     "--endpt",
     required=True,
     type=tuple((float, float)),
     help="format x y pair as floats for example: -103.800787 40.272798 ",
-)
+)  # type: ignore
 @click.option(
     "-c",
     "--crs",
@@ -207,34 +226,54 @@ def xsatpoint(nldi_xstool, lonlat, numpoints, width, resolution, file, verbose):
     type=str,
     help="spatial reference of input data",
     default="epsg:4326",
-)
+)  # type: ignore
 @click.option(
     "-n", "--numpoints", default=100, type=int, help="number of points in cross-section"
-)
+)  # type: ignore
 @click.option(
     "-r",
     "--resolution",
     type=click.Choice(["1m", "3m", "5m", "10m", "30m", "60m"], case_sensitive=False),
     default="10m",
     help="Resolution of DEM used.  Note: 3DEP provides server side interpolatin given best available data",
-)
-@click.option("-v", "--verbose", default=False, type=bool, help="verbose ouput")
-@pass_nldi_xstool
-def xsatendpts(nldi_xstool, startpt, endpt, crs, numpoints, resolution, file, verbose):
-    """Get cross-section at user-defined end points.
+)  # type: ignore
+@click.option("-v", "--verbose", default=False, type=bool, help="verbose ouput")  # type: ignore
+@pass_nldi_xstool  # type: ignore
+def xsatendpts(
+    nldi_xstool: "NLDIXSTool",
+    startpt: Tuple[float, float],
+    endpt: Tuple[float, float],
+    crs: str,
+    numpoints: int,
+    resolution: str,
+    file: Any,
+    verbose: bool,
+):
+    """bla.
 
-    Args:
-        nldi_xstool (class): nldi-xstool
-        startpt (list): List of lon lat points
-        endpt (list): List of lon lat points
-        crs (str): CRS string
-        numpoints (int): numpoints
-        resolution (int): resolution of 3DEP product, note underlying resolution maybe greater or less.
-        file (str): file path and name.
-        verbose (bool): verbosity
+    Parameters
+    ----------
+    nldi_xstool : NLDIXSTool
+        [description]
+    startpt : Tuple[float, float]
+        [description]
+    endpt : Tuple[float, float]
+        [description]
+    crs : str
+        [description]
+    numpoints : int
+        [description]
+    resolution : str
+        [description]
+    file : Any
+        [description]
+    verbose : bool
+        [description]
 
-    Returns:
-        geojson: geojson packet
+    Returns
+    -------
+    [type]
+        [description]
     """
     x1 = startpt[0]
     y1 = startpt[1]
