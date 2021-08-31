@@ -1,4 +1,9 @@
 """Ancilarry."""
+from typing import Any
+from typing import List
+from typing import Tuple
+
+import geopandas as gpd
 import requests
 from dataretrieval import nwis
 from shapely.geometry import LineString
@@ -8,19 +13,30 @@ from shapely.geometry import Polygon
 from nldi_xstool.ExtADCPBathy import ExtADCPBathy
 
 
-def get_ext_bathy_xs(file, dist, lonstr, latstr, estr, acrs):
-    """Extend a USGS measured bathy cross-section to above land.
+def get_ext_bathy_xs(
+    file: str, dist: float, lonstr: str, latstr: str, estr: str, acrs: str
+) -> gpd.GeoDataFrame:
+    """Extend a measured bathymetric cross-section to above water topography.
 
-    Args:
-        file ([type]): [description]
-        dist ([type]): [description]
-        lonstr ([type]): [description]
-        latstr ([type]): [description]
-        estr ([type]): [description]
-        acrs ([type]): [description]
+    Parameters
+    ----------
+    file : str
+        Bathymetric survey file
+    dist : float
+        Distance to extend survey on both ends.
+    lonstr : str
+        String heading on longitude in file.
+    latstr : str
+        String heading on latitude in file.
+    estr : str
+        String heading on elevation in file.
+    acrs : str
+        String heading on crs code of measured lon/lat values, for example: espg:4326.
 
-    Returns:
-        [type]: [description]
+    Returns
+    -------
+    gpd.GeoDataFrame
+        Geopandas dataframe of complete cross-section.
     """
     exs = ExtADCPBathy(
         file=file, dist=dist, lonstr=lonstr, latstr=latstr, estr=estr, acrs=acrs
@@ -33,15 +49,22 @@ def get_ext_bathy_xs(file, dist, lonstr, latstr, estr, acrs):
 # https://www.ngs.noaa.gov/web_services/ncat/lat-long-height-service.shtml
 
 
-def get_gage_datum(gagenum, verbose=False):
-    """Get USGS gage datum.
+def get_gage_datum(gagenum: str, verbose: bool = False) -> float:
+    """Returns the datum of USGS gage in meters.
 
-    Args:
-        gagenum ([type]): [description]
-        verbose (bool, optional): [description]. Defaults to False.
+    Function uses the NOAA NGS Vertcon service to convert NGVD29 to NAVD88 if necessary.
 
-    Returns:
-        [type]: [description]
+    Parameters
+    ----------
+    gagenum : str
+        USGS Gage number
+    verbose : bool, optional
+        Verbose output, by default False
+
+    Returns
+    -------
+    float
+        USGS Gage datum in meters
     """
     si = nwis.get_record(sites=gagenum, service="site")
     if si["alt_datum_cd"].values[0] == "NGVD29":
@@ -86,7 +109,7 @@ def get_gage_datum(gagenum, verbose=False):
         return float(resp["destOrthoht"])
     else:
         # print('non-conversion')
-        return si["alt_va"].values[0] * 0.3048
+        return float(si["alt_va"].values[0] * 0.3048)
 
 
 # Resolution types and their respective IDs for the Rest Service
@@ -104,16 +127,22 @@ dim_order = {"latlon": 0, "lonlat": 1}
 # 'width' is in meters. It is the width of the buffer to place around the input geometry
 
 
-def make_bbox(shape_type, coords, width):
-    """Make a bounding box based on shape type.
+def make_bbox(shape_type: str, coords: List[Tuple[float, float]], width: int) -> Any:
+    """Return a bounding box of the coordinates buffered by width.
 
-    Args:
-        shape_type ([type]): [description]
-        coords ([type]): [description]
-        width ([type]): [description]
+    Parameters
+    ----------
+    shape_type : str
+        Shapetype one of: point, line, polygon
+    coords : List[Tuple]
+        List of coordinate tuples
+    width : int
+        Width in meters
 
-    Returns:
-        [type]: [description]
+    Returns
+    -------
+    Any
+        Bounding box of geometry (minx, miny, maxx, maxy)
     """
     if shape_type == "point":
         shape = Point(coords)
@@ -134,30 +163,53 @@ def make_bbox(shape_type, coords, width):
 # Maybe fix this later
 
 
-def convert_width(width):  # noqa D103
+def convert_width(width: int) -> int:
+    """Buffer bbox geometry with specified width.
+
+    This is an esitmation and is not precise.
+
+    Parameters
+    ----------
+    width : int
+        Width in meters to bffer geometries bounding box.
+
+    Returns
+    -------
+    int
+        buffer in degrees
+    """
     factor = 1 / 70000
     dist = factor * width
-    return dist
+    return int(dist)
 
 
 # Get request from arcgis Rest Services
 
 
-def get_dem(bbox, res_type):
-    """Get 3DEP DEM.
+def get_dem(bbox: Tuple[float, float, float, float], res_type: str) -> bool:
+    """Esri map service query of 3DEPElevationIncex using bounding box.
 
-    Args:
-        bbox ([type]): [description]
-        res_type ([type]): [description]
+    Return the True if res_type (Resolution of 3DEP elevation) intersects bounding box (bbox)
 
-    Returns:
-        [type]: [description]
+    Parameters
+    ----------
+    bbox : Tuple[float, float, float, float]
+        (minx, miny, maxx, maxy)
+    res_type : str
+        Key in: res_types = {"res_1m": 18, "res_3m": 19,"res_5m": 20,
+            "res_10m": 21,"res_30m": 22,"res_60m": 23,}
+
+    Returns
+    -------
+    bool
+        True if bbox intersects 3DEP elevation with res_type
     """
     minx = str(bbox[0])
     miny = str(bbox[1])
     maxx = str(bbox[2])
     maxy = str(bbox[3])
     res_id = res_types[res_type]
+    return_val = False
 
     url = f"https://index.nationalmap.gov/arcgis/rest/services/3DEPElevationIndex/MapServer/{res_id}/query"
     payload = {
@@ -214,31 +266,37 @@ def get_dem(bbox, res_type):
     if "features" in resp:
         # If the features are not empty, then the DEM exist
         if resp["features"] != []:
-            return True
+            return_val = True
         # If features are empty, then no DEM
         if resp["features"] == []:
-            return False
+            return_val = False
     # If 'error', then there was an unsuccessful request
     if "error" in resp:
-        return "Error!"
+        return_val = False
+    return return_val
 
 
 # The function to loop thru all resolutions and submit queries
 
 
-def query_dems(shape_type, coords, width=100):  # pragma: no cover
-    """Query DEM for available resolutions.
+def query_dems(
+    shape_type: str, coords: List[Tuple[float, float]], width: int = 100
+) -> Any:
+    """Query 3DEPElevation Index based on shape type and coordinates for available spatial resolution.
 
-    Queries 3DEP 3DEPElevationIndex and returns of dictionary of available
-    resolutions for shapes bounding box.
+    Parameters
+    ----------
+    shape_type : str
+        One of: point, line, polygon
+    coords : List[Tuple[float, float]]
+        List of coordinate tuples, for example: [(x,y), (x,y)].
+    width : int, optional
+        Width to buffer bounding box of shape, by default 100
 
-    Args:
-        shape_type (Shapely geometric object in [Point, LineString, Polygon]): [description]
-        coords (List of tuples): For example, [(x,y), (x,y)]
-        width (int, optional): [width to buffer bounding box of shape]. Defaults to 100.
-
-    Returns:
-        [type]: [description]
+    Returns
+    -------
+    Any
+        Dictionary of query keys for example: res_1m, and bool intersection values.
     """
     resp = {}  # Create an empty dictionary for the response
     bbox = make_bbox(shape_type, coords, width)  # Make the bbox
@@ -252,14 +310,20 @@ def query_dems(shape_type, coords, width=100):  # pragma: no cover
     return resp
 
 
-def query_dems_shape(bbox):
-    """Query dems resolution based on bbox.
+def query_dems_shape(bbox: Tuple[float, float, float, float]) -> Any:
+    """Query 3DEP Elevation Index for available spatial resolution.
 
-    Args:
-        bbox ([type]): [description]
+    Uses esriSpatialRelIntersects - Query Geometry Intersects Target Geometry.
 
-    Returns:
-        [type]: [description]
+    Parameters
+    ----------
+    bbox : Tuple[float]
+        (minx, miny, maxx, maxy)
+
+    Returns
+    -------
+    Dict
+        Boolian values associated with resolution keys.
     """
     resp = {}
 

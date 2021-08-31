@@ -1,22 +1,44 @@
 """Function to interpolate a tensioned spline based on user defined x,y points.
 
-Code based on Fortran code developed by Jonathan Nelson at USGS.
+Code based on Fortran code developed by Jonathan Nelson (jmn@usgs.gov) at USGS.
 """
 import numpy as np
+import numpy.typing as npt
 
 
-def tspline(x, y, n, xout, yout, iout, sigma, yp, temp) -> None:
-    """Tensioned spline.
+def tspline(
+    x: npt.NDArray[np.double],
+    y: npt.NDArray[np.double],
+    n: int,
+    xout: npt.NDArray[np.double],
+    yout: npt.NDArray[np.double],
+    iout: int,
+    sigma: float,
+    yp: npt.NDArray[np.double],
+    temp: npt.NDArray[np.double],
+) -> None:
+    """Tension spline generator.
 
-    :param x: double
-    :param y: double
-    :param n: integer
-    :param xout: double
-    :param iout: int
-    :param sigma: float
-    :param yp: double
-    :param tmp: double
-    :return:
+    Parameters
+    ----------
+    x : npt.NDArray[np.double]
+        [description]
+    y : npt.NDArray[np.double]
+        [description]
+    n : int
+        [description]
+    xout : npt.NDArray[np.double]
+        [description]
+    yout : npt.NDArray[np.double]
+        [description]
+    iout : int
+        [description]
+    sigma : float
+        [description]
+    yp : npt.NDArray[np.double]
+        [description]
+    temp : npt.NDArray[np.double]
+        [description]
     """
     nm1 = n - 2
     np1 = n

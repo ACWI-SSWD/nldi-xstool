@@ -24,3 +24,4 @@ sphinx-rtd-theme
 reorder-python-imports
 ipython
 bump2version
+types-requests

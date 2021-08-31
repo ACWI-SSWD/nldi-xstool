@@ -1,6 +1,9 @@
 """Main module."""
 # from nldi_xstool.cli import xsatendpts
 import sys
+from typing import Any
+from typing import List
+from typing import Tuple
 
 import geopandas as gpd
 import numpy as np
@@ -14,6 +17,7 @@ from shapely.geometry import Point
 from nldi_xstool.PathGen import PathGen
 from nldi_xstool.XSGen import XSGen
 
+
 # import json
 # import xarray as xr
 # from matplotlib import pyplot as plt
@@ -21,35 +25,54 @@ from nldi_xstool.XSGen import XSGen
 # import os.path as path
 
 
-class HPoint(Point):  # noqa D101
-    def __init__(self, *args, **kwargs):  # noqa D101
+class HPoint(Point):  # type: ignore
+    """Class for HPoint."""
+
+    def __init__(self: "HPoint", *args, **kwargs):  # type: ignore
+        """Class HPoint class."""
         super().__init__(*args, **kwargs)
 
-    def __hash__(self):  # noqa D101
+    def __hash__(self: "HPoint"):  # type: ignore
+        """Hash function."""
         return hash(tuple(self.coords))  # pragma: no cover
 
 
-def dataframe_to_geodataframe(df, crs):  # noqa D103
+def dataframe_to_geodataframe(
+    df: pd.DataFrame, crs: str
+) -> gpd.GeoDataFrame:  # noqa D103
+    """Convert pandas Dataframe to Geodataframe."""
     geometry = [HPoint(xy) for xy in zip(df.x, df.y)]
     df = df.drop(["x", "y"], axis=1)
     gdf = gpd.GeoDataFrame(df, geometry=geometry, crs=crs)
     return gdf
 
 
-def getxsatendpts(path, numpts, crs="epsg:4326", file=None, res=10):
-    """Get cross-section at user-defined end points.
+def getxsatendpts(
+    path: List[Tuple[float, float]],
+    numpts: int,
+    crs: str = "epsg:4326",
+    file: str = "",
+    res: int = 10,
+) -> Any:
+    """Get cross-section at user defined endpoints.
 
-    Args:
-        path (list): List containing end points of cross-sectin starting on river-left orientation, ie. viewed from
-            downstream.
-        numpts (int): Number of points in cross-section
-        crs (str): CRS string of input path.
-        file (str, optional): path and filename of returned cross-section as geojson file. Defaults to None.
-        res (int): Resolution of topography used to generate cross-section.  Caution: underlying resolution by
-            greater or less
+    Parameters
+    ----------
+    path : List[Tuple[float, float]]
+        [description]
+    numpts : int
+        [description]
+    crs : str, optional
+        [description], by default "epsg:4326"
+    file : str, optional
+        [description], by default ""
+    res : int, optional
+        [description], by default 10
 
-    Returns:
-        geopandas dataframe: returned cross-section as Geopandas DataFrame.
+    Returns
+    -------
+    Any
+        [description]
     """
     lnst = []
     for pt in path:
@@ -89,37 +112,37 @@ def getxsatendpts(path, numpts, crs="epsg:4326", file=None, res=10):
     # gpdsi.set_crs(epsg=3857, inplace=True)
     gpdsi.to_crs(epsg=4326, inplace=True)
     if file:
-        if not isinstance(file, str):
-            # with open(file, "w") as f:
-            file.write(gpdsi.to_json())
-            file.close()
-            return 0
-        else:  # pragma: no cover
-            with open(file, "w") as f:
-                f.write(gpdsi.to_json())
-                f.close()
+        with open(file, "w") as f:
+            f.write(gpdsi.to_json())
+            f.close()
             # gpdsi.to_file(file, driver="GeoJSON")
             return 0
     else:
         return gpdsi
 
 
-def getxsatpoint(point, numpoints, width, file=None, res=10):
-    """Get cross-sectin given user defined point.
+def getxsatpoint(
+    point: List[float], numpoints: int, width: float, file: str = "", res: int = 10
+) -> Any:
+    """Get cross-section at user defined point.
 
-    Function uses USGS NLDI to find nearest stream-segment and intersection from given point.  The stream segment is
-        interpolated using a tensioned spline and a cross-section is projected on to the resulting line given the user-
-        defined width and numpoints.
+    Parameters
+    ----------
+    point : List[float]
+        [description]
+    numpoints : int
+        [description]
+    width : float
+        [description]
+    file : str, optional
+        [description], by default ""
+    res : int, optional
+        [description], by default 10
 
-    Args:
-        point ([type]): [description]
-        numpoints ([type]): [description]
-        width ([type]): [description]
-        file ([type], optional): [description]. Defaults to None.
-        res (int, optional): [description]. Defaults to 10.
-
-    Returns:
-        [type]: [description]
+    Returns
+    -------
+    [type]
+        [description]
     """
     # tpoint = f'POINT({point[1]} {point[0]})'
     df = pd.DataFrame(
@@ -157,32 +180,27 @@ def getxsatpoint(point, numpoints, width, file=None, res=10):
     # gpdsi.set_crs(epsg=3857, inplace=True)
     gpdsi.to_crs(epsg=4326, inplace=True)
     if file:
-        if not isinstance(file, str):
-            # with open(file, "w") as f:
-            file.write(gpdsi.to_json())
-            file.close()
-            return 0
-        else:  # pragma: no cover
-            with open(file, "w") as f:
-                f.write(gpdsi.to_json())
-                f.close()
-            # gpdsi.to_file(file, driver="GeoJSON")
-            return 0
+        with open(file, "w") as f:
+            f.write(gpdsi.to_json())
+            f.close()
+        # gpdsi.to_file(file, driver="GeoJSON")
+        return 0
     else:
         return gpdsi  # pragma: no cover
 
 
-def __lonlat_to_point(lon, lat):  # noqa D103
+def __lonlat_to_point(lon: float, lat: float) -> Point:  # noqa D103
     return Point(lon, lat)
 
 
-def __get_cid_from_lonlat(point):
+def __get_cid_from_lonlat(point: List[float]) -> int:
     # print(point)
     pt = __lonlat_to_point(point[0], point[1])
     location = pt.wkt
-    location = f"POINT({point[0]} {point[1]})"
+    location = f"POyuINT({point[0]} {point[1]})"
     base_url = "https://labs.waterdata.usgs.gov/api/nldi/linked-data/comid/position?f=json&coords="
     url = base_url + location
+    comid: int = -1
     # print(url)
     try:
         response = requests.get(url)
@@ -190,7 +208,7 @@ def __get_cid_from_lonlat(point):
         response.raise_for_status()
         jres = response.json()
         comid = jres["features"][0]["properties"]["comid"]
-        return comid
+
     except requests.exceptions.RequestException as err:  # pragma: no cover
         print("OOps: Something Else", err)
     except requests.exceptions.HTTPError as errh:  # pragma: no cover
@@ -201,3 +219,5 @@ def __get_cid_from_lonlat(point):
         print("Timeout Error:", errt)
     except Exception as ex:  # pragma: no cover
         raise ex
+
+    return comid

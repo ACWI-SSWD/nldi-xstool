@@ -148,7 +148,7 @@ class Centerline:
             tyctmp = np.zeros(3)
             tyctmp = np.append(tyctmp, self.y[0])  # type: ignore
             tyctmp = np.append(tyctmp, self.y[0] + (self.y[1] - self.y[0]) / 2.0)  # type: ignore
-            tyctmp = np.append(tyctmp, self.y[1])  # type: ignore
+            tyctmp = np.append(tyctmp, self.y[1])
 
             tspline(
                 sitmp,

@@ -1,53 +1,46 @@
 """Tools for extending USGS measured Bathymetry (preliminary)."""
 from pathlib import Path
+from typing import Any
 
 import geopandas as gpd
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 from geopandas.array import points_from_xy
 
 from nldi_xstool.nldi_xstool import getxsatendpts
 
 
-def getxs(gdf, numpts, res):
-    """Get cross-section.
-
-    Args:
-        gdf ([type]): [description]
-        numpts ([type]): [description]
-        res ([type]): [description]
-
-    Returns:
-        [type]: [description]
-    """
-    return getxsatendpts(
-        [
-            (gdf.geometry[0].x, gdf.geometry[0].y),
-            (gdf.geometry[1].x, gdf.geometry[1].y),
-        ],
-        numpts=numpts,
-        crs="epsg:4326",
-        res=res,
-    )
-
-
-def distance(p1t, p2t):  # noqa D102
-    return np.sqrt(np.sum(np.square(np.array(p2t) - np.array(p1t))))
-
-
 class ExtADCPBathy:
     """Class to facilitate extending USGS measured bathymetry cross-sections."""
 
-    def __init__(self, file, dist, lonstr, latstr, estr, acrs) -> None:
-        """Initialize class.
+    def __init__(
+        self: "ExtADCPBathy",
+        file: str,
+        dist: float,
+        lonstr: str,
+        latstr: str,
+        estr: str,
+        acrs: str,
+    ) -> None:
+        """Init ExtADCPBathy class.
 
-        Args:
-            file ([type]): [description]
-            dist ([type]): [description]
-            lonstr ([type]): [description]
-            latstr ([type]): [description]
-            estr ([type]): [description]
-            acrs ([type]): [description]
+        Parameters
+        ----------
+        self : ExtADCPBathy
+            [description]
+        file : str
+            [description]
+        dist : float
+            [description]
+        lonstr : str
+            [description]
+        latstr : str
+            [description]
+        estr : str
+            [description]
+        acrs : str
+            [description]
         """
         self.afile = Path(file)
         assert self.afile.exists()
@@ -68,11 +61,17 @@ class ExtADCPBathy:
         del self.agdf[estr]
 
         self.ext = dist
-        self.xs_complete = None
+        self.xs_complete = gpd.GeoDataFrame()
 
         self._buildgeom()
 
-    def _buildgeom(self):
+    def _distance(
+        self: "ExtADCPBathy", p1t: npt.NDArray[np.float64], p2t: npt.NDArray[np.float64]
+    ) -> Any:
+        """Convenience function to calc distance between 2 points."""
+        return np.sqrt(np.sum(np.square(np.array(p2t) - np.array(p1t))))
+
+    def _buildgeom(self: "ExtADCPBathy") -> None:
         npts = len(self.agdf)
         p1 = np.array(self.agdf.geometry[0])
         p2 = np.array(self.agdf.geometry[npts - 1])
@@ -105,8 +104,8 @@ class ExtADCPBathy:
         # del gdf_post['distance']
         gdf_post_geo = gdf_post.to_crs("epsg:4326")
 
-        new_df_pre = getxs(gdf_pre_geo, int(self.ext), 1.0).to_crs("epsg:5071")
-        new_df_post = getxs(gdf_post_geo, int(self.ext), 1.0).to_crs("epsg:5071")
+        new_df_pre = self._getxs(gdf_pre_geo, int(self.ext), 1).to_crs("epsg:5071")
+        new_df_post = self._getxs(gdf_post_geo, int(self.ext), 1).to_crs("epsg:5071")
         del new_df_pre["distance"]
         del new_df_post["distance"]
         new_df_pre["code"] = "0"
@@ -122,7 +121,50 @@ class ExtADCPBathy:
         for index, v in self.xs_complete.iterrows():
             if index == 0:
                 p1 = v.geometry
-            self.xs_complete.at[index, "station"] = distance(p1, v.geometry)
+            self.xs_complete.at[index, "station"] = self._distance(p1, v.geometry)
 
-    def get_xs_complete(self):  # noqa D102
+    def _getxs(
+        self: "ExtADCPBathy", gdf: gpd.GeoDataFrame, numpts: int, res: int
+    ) -> gpd.GeoDataFrame:
+        """Convenience wrapper for nldi-xstool.getxsatendpts.
+
+        Parameters
+        ----------
+        self : ExtADCPBathy
+            [description]
+        gdf : gpd.GeoDataFrame
+            [description]
+        numpts : int
+            [description]
+        res : int
+            [description]
+
+        Returns
+        -------
+        gpd.GeoDataFrame
+            [description]
+        """
+        return getxsatendpts(
+            [
+                (gdf.geometry[0].x, gdf.geometry[0].y),
+                (gdf.geometry[1].x, gdf.geometry[1].y),
+            ],
+            numpts=numpts,
+            crs="epsg:4326",
+            res=res,
+        )
+
+    def get_xs_complete(self: "ExtADCPBathy") -> gpd.GeoDataFrame:
+        """Return extened cross-section.
+
+        Parameters
+        ----------
+        self : ExtADCPBathy
+            [description]
+
+        Returns
+        -------
+        [type]
+            [description]
+        """
         return self.xs_complete.to_crs(self.crs)
