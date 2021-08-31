@@ -81,15 +81,13 @@ def precommit(session: Session) -> None:
         "black",
         "darglint",
         "flake8",
-        "flake8-bandit",
         "flake8-bugbear",
         "flake8-docstrings",
         "flake8-rst-docstrings",
         "pep8-naming",
         "pre-commit",
-        "pre-commit-hooks",
-        "reorder-python-imports",
     )
+    session.install("flake8-bandit", "reorder-python-imports", "pre-commit-hooks")
     session.run("pre-commit", *args)
     if args and args[0] == "install":
         activate_virtualenv_in_precommit_hooks(session)

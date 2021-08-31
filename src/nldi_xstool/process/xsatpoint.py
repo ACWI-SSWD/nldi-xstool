@@ -91,7 +91,7 @@ PROCESS_METADATA = {
 }
 
 
-class NLDIxsatpointProcessor(BaseProcessor):
+class NLDIxsatpointProcessor(BaseProcessor):  # type: ignore
     """NLDI Get Cross-sectin at Point."""
 
     def __init__(self, provider_def):
@@ -115,7 +115,7 @@ class NLDIxsatpointProcessor(BaseProcessor):
         timebefore = time.perf_counter()
 
         # print("before function")
-        results = getxsatpoint((lon, lat), numpts, width)
+        results = getxsatpoint([lon, lat], numpts, width)
         # print("after function")
         # print(results)
 

@@ -97,7 +97,7 @@ PROCESS_METADATA = {
 }
 
 
-class NLDIxsatendptsProcessor(BaseProcessor):
+class NLDIxsatendptsProcessor(BaseProcessor):  # type: ignore
     """NLDI xsatendpoints Processor."""
 
     def __init__(self, provider_def):
@@ -116,7 +116,7 @@ class NLDIxsatendptsProcessor(BaseProcessor):
         lat = list(data["lat"])
         lon = list(data["lon"])
         numpts = int(data["numpts"])
-        res = float(data["3dep_res"])
+        res = int(data["3dep_res"])
 
         print(lat, lon, numpts, res)
 

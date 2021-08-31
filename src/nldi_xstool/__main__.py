@@ -1,7 +1,6 @@
 """Command-line interface."""
 import sys
 from typing import Any
-from typing import Optional
 from typing import Tuple
 
 import click
@@ -60,11 +59,11 @@ class NLDIXSTool:
         """Init NLDIXSTool."""
         self.out_crs = "epsg:4326"
 
-    def setoutcrs(self: "NLDIXSTool", out_crs: Optional[str] = "epsg:4326") -> None:
+    def setoutcrs(self: "NLDIXSTool", out_crs: str = "epsg:4326") -> None:
         """Set the CRS for output.
 
         Args:
-            out_crs (str, optional): Set the CRS string for projection of output. Defaults to "epsg:4326".
+            out_crs (str): Set the CRS string for projection of output. Defaults to "epsg:4326".
         """
         self.out_crs = out_crs
 
@@ -88,14 +87,14 @@ class NLDIXSTool:
 pass_nldi_xstool = click.make_pass_decorator(NLDIXSTool)
 
 
-@click.group()  # type: ignore
+@click.group()
 @click.option(
     "--outcrs",
     default="epsg:4326",
     help="Projection CRS to return cross-section geometry: default is epsg:4326",
-)  # type: ignore
-@click.version_option("0.1")  # type: ignore
-@click.pass_context  # type: ignore
+)
+@click.version_option("0.1")
+@click.pass_context
 def main(ctx: Any, outcrs: str) -> int:
     """nldi-xstooln is a command line tool to for elevation-based services to the NLDI."""
     ctx.obj = NLDIXSTool()
@@ -106,14 +105,14 @@ def main(ctx: Any, outcrs: str) -> int:
 # XS command at point with NHD
 
 
-@main.command()  # type: ignore
+@main.command()
 @click.option(
     "-f",
     "--file",
     default=None,
     type=click.File("w"),
     help="enter path and filenmae for json ouput",
-)  # type: ignore
+)
 @click.option(
     "-ll",
     "--lonlat",
@@ -122,22 +121,22 @@ def main(ctx: Any, outcrs: str) -> int:
     type=tuple((float, float)),
     callback=valid_lonlat,
     help="format lon,lat (x,y) as floats for example: -103.8011 40.2684",
-)  # type: ignore
+)
 @click.option(
     "-n", "--numpoints", default=101, type=int, help="number of points in cross-section"
-)  # type: ignore
+)
 @click.option(
     "-w", "--width", default=1000.0, type=float, help="width of cross-section"
-)  # type: ignore
+)
 @click.option(
     "-r",
     "--resolution",
     type=click.Choice(["1m", "3m", "5m", "10m", "30m", "60m"], case_sensitive=False),
     default="10m",
     help="Resolution of DEM used.  Note: 3DEP provides server side interpolatin given best available data",
-)  # type: ignore
-@click.option("-v", "--verbose", default=False, type=bool, help="verbose ouput")  # type: ignore
-@pass_nldi_xstool  # type: ignore
+)
+@click.option("-v", "--verbose", default=False, type=bool, help="verbose ouput")
+@pass_nldi_xstool
 def xsatpoint(
     nldi_xstool: "NLDIXSTool",
     lonlat: Tuple[float, float],
@@ -146,7 +145,7 @@ def xsatpoint(
     resolution: str,
     file: Any,
     verbose: bool,
-):
+) -> int:
     """[summary].
 
     Parameters
@@ -201,24 +200,24 @@ def xsatpoint(
 # XS command at user defined endpoints
 
 
-@main.command()  # type: ignore
+@main.command()
 @click.option(
     "-f", "--file", default=None, type=click.File("w"), help="Output json file"
-)  # type: ignore
+)
 @click.option(
     "-s",
     "--startpt",
     required=True,
     type=tuple((float, float)),
     help="format x y pair as floats for example: -103.801134 40.267335",
-)  # type: ignore
+)
 @click.option(
     "-e",
     "--endpt",
     required=True,
     type=tuple((float, float)),
     help="format x y pair as floats for example: -103.800787 40.272798 ",
-)  # type: ignore
+)
 @click.option(
     "-c",
     "--crs",
@@ -226,19 +225,19 @@ def xsatpoint(
     type=str,
     help="spatial reference of input data",
     default="epsg:4326",
-)  # type: ignore
+)
 @click.option(
     "-n", "--numpoints", default=100, type=int, help="number of points in cross-section"
-)  # type: ignore
+)
 @click.option(
     "-r",
     "--resolution",
     type=click.Choice(["1m", "3m", "5m", "10m", "30m", "60m"], case_sensitive=False),
     default="10m",
     help="Resolution of DEM used.  Note: 3DEP provides server side interpolatin given best available data",
-)  # type: ignore
-@click.option("-v", "--verbose", default=False, type=bool, help="verbose ouput")  # type: ignore
-@pass_nldi_xstool  # type: ignore
+)
+@click.option("-v", "--verbose", default=False, type=bool, help="verbose ouput")
+@pass_nldi_xstool
 def xsatendpts(
     nldi_xstool: "NLDIXSTool",
     startpt: Tuple[float, float],
@@ -248,7 +247,7 @@ def xsatendpts(
     resolution: str,
     file: Any,
     verbose: bool,
-):
+) -> int:
     """bla.
 
     Parameters

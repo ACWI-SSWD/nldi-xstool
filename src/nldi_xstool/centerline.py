@@ -136,18 +136,18 @@ class Centerline:
             self.yp = np.zeros(3)
             self.temp = np.zeros(3)
             sitmp = np.zeros(3)
-            sitmp = np.append(sitmp, [self.si[0]])  # type: ignore
-            sitmp = np.append(sitmp, [self.si[1] / 2])  # type: ignore
-            sitmp = np.append(sitmp, self.si[1])  # type: ignore
+            sitmp = np.append(sitmp, [self.si[0]])
+            sitmp = np.append(sitmp, [self.si[1] / 2])
+            sitmp = np.append(sitmp, self.si[1])
 
             txctmp = np.zeros(3)
-            txctmp = np.append(txctmp, self.x[0])  # type: ignore
-            txctmp = np.append(txctmp, self.x[0] + (self.x[1] - self.x[0]) / 2.0)  # type: ignore
-            txctmp = np.append(txctmp, self.x[1])  # type: ignore
+            txctmp = np.append(txctmp, self.x[0])
+            txctmp = np.append(txctmp, self.x[0] + (self.x[1] - self.x[0]) / 2.0)
+            txctmp = np.append(txctmp, self.x[1])
 
             tyctmp = np.zeros(3)
-            tyctmp = np.append(tyctmp, self.y[0])  # type: ignore
-            tyctmp = np.append(tyctmp, self.y[0] + (self.y[1] - self.y[0]) / 2.0)  # type: ignore
+            tyctmp = np.append(tyctmp, self.y[0])
+            tyctmp = np.append(tyctmp, self.y[0] + (self.y[1] - self.y[0]) / 2.0)
             tyctmp = np.append(tyctmp, self.y[1])
 
             tspline(
