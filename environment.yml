@@ -6,6 +6,7 @@ dependencies:
   - python>=3.8
   - pip
   # Production dependencies defined here (as well as in requirements.txt)
+  - numpy>=1.21.0
   - click
   - pygeoapi
   - pygeohydro

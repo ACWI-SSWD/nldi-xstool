@@ -98,7 +98,8 @@ def precommit(session: Session) -> None:
 @nox.session(python="3.9", venv_backend="conda")
 def safety(session: Session) -> None:
     """Scan dependencies for insecure packages."""
-    session.conda_install("safety", ".")
+    session.conda_install("safety")
+    session.install(".")
     session.run("safety", "check", "--full-report")
 
 
@@ -106,8 +107,8 @@ def safety(session: Session) -> None:
 def mypy(session: Session) -> None:
     """Type-check using mypy."""
     args = session.posargs or ["src", "tests", "docs/conf.py"]
-    session.conda_install(".")
-    session.conda_install("mypy", "pytest", "numpy")
+    session.conda_install("mypy", "pytest", "types-requests")
+    session.install(".")
     session.run("mypy", *args)
     if not session.posargs:
         session.run("mypy", f"--python-executable={sys.executable}", "noxfile.py")
@@ -116,8 +117,8 @@ def mypy(session: Session) -> None:
 @nox.session(python=python_versions, venv_backend="conda")
 def tests(session: Session) -> None:
     """Run the test suite."""
-    session.conda_install(".")
-    session.conda_install("coverage[toml]", "pytest", "pygments", "numpy")
+    session.conda_install("coverage[toml]", "pytest", "pygments", "numpy>=1.21.0")
+    session.install(".")
     try:
         session.run("coverage", "run", "--parallel", "-m", "pytest", *session.posargs)
     finally:
@@ -141,8 +142,8 @@ def coverage(session: Session) -> None:
 @nox.session(python=python_versions, venv_backend="conda")
 def typeguard(session: Session) -> None:
     """Runtime type checking using Typeguard."""
-    session.conda_install(".")
-    session.conda_install("pytest", "typeguard", "pygments", "numpy")
+    session.conda_install("pytest", "typeguard", "pygments", "numpy>=1.21.0")
+    session.install(".")
     session.run("pytest", f"--typeguard-packages={package}", *session.posargs)
 
 
@@ -150,8 +151,8 @@ def typeguard(session: Session) -> None:
 def xdoctest(session: Session) -> None:
     """Run examples with xdoctest."""
     args = session.posargs or ["all"]
-    session.conda_install(".")
     session.conda_install("xdoctest[colors]")
+    session.install(".")
     session.run("python", "-m", "xdoctest", package, *args)
 
 
@@ -159,8 +160,8 @@ def xdoctest(session: Session) -> None:
 def docs_build(session: Session) -> None:
     """Build the documentation."""
     args = session.posargs or ["docs", "docs/_build"]
-    session.conda_install(".")
     session.conda_install("sphinx", "sphinx-click", "sphinx-rtd-theme")
+    session.install(".")
 
     build_dir = Path("docs", "_build")
     if build_dir.exists():
@@ -173,10 +174,10 @@ def docs_build(session: Session) -> None:
 def docs(session: Session) -> None:
     """Build and serve the documentation with live reloading on file changes."""
     args = session.posargs or ["--open-browser", "docs", "docs/_build"]
-    session.conda_install(".")
     session.conda_install(
         "sphinx", "sphinx-autobuild", "sphinx-click", "sphinx-rtd-theme"
     )
+    session.conda_install(".")
 
     build_dir = Path("docs", "_build")
     if build_dir.exists():
