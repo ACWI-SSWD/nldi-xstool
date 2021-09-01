@@ -71,7 +71,7 @@ def test_xsatendpts():
                 "-r",
                 "10m",
                 "-v",
-                True,
+                "True",
             ],
         )
         assert result.exit_code == 0

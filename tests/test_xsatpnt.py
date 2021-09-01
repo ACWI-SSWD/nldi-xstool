@@ -18,5 +18,7 @@ from nldi_xstool.nldi_xstool import getxsatpoint
 def test_run_getxsatpoint(path, width, numpts, res):
     """Test getxsatpoint function."""
     with NamedTemporaryFile(mode="w+") as tf:
-        xs = getxsatpoint(point=path, numpoints=numpts, width=width, file=tf, res=res)
+        xs = getxsatpoint(
+            point=path, numpoints=numpts, width=width, file=tf.name, res=res
+        )
         assert xs == 0

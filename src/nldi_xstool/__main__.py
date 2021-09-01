@@ -192,7 +192,7 @@ def xsatpoint(
         file=file,
         res=resdict.get(resolution),
     )
-    if file is None:
+    if not file:
         print(xs.to_json())
     return 0
 
@@ -298,7 +298,7 @@ def xsatendpts(
     xs = getxsatendpts(
         path=path, numpts=numpoints, res=resdict.get(resolution), crs=crs, file=file
     )
-    if file is None:
+    if not file:
         print(xs.to_json())
     return 0
 

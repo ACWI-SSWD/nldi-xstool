@@ -1,6 +1,5 @@
 """Ancilarry."""
 from typing import Any
-from typing import IO
 from typing import List
 from typing import Tuple
 
@@ -15,7 +14,7 @@ from nldi_xstool.ExtADCPBathy import ExtADCPBathy
 
 
 def get_ext_bathy_xs(
-    file: IO, dist: float, lonstr: str, latstr: str, estr: str, acrs: str
+    file: str, dist: float, lonstr: str, latstr: str, estr: str, acrs: str
 ) -> gpd.GeoDataFrame:
     """Extend a measured bathymetric cross-section to above water topography.
 

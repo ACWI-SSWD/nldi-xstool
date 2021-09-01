@@ -1,7 +1,6 @@
 """Tools for extending USGS measured Bathymetry (preliminary)."""
 from pathlib import Path
 from typing import Any
-from typing import IO
 
 import geopandas as gpd
 import numpy as np
@@ -17,7 +16,7 @@ class ExtADCPBathy:
 
     def __init__(
         self: "ExtADCPBathy",
-        file: IO,
+        file: str,
         dist: float,
         lonstr: str,
         latstr: str,
