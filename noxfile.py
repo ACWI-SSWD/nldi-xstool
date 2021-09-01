@@ -159,7 +159,7 @@ def typeguard(session: Session) -> None:
 def xdoctest(session: Session) -> None:
     """Run examples with xdoctest."""
     args = session.posargs or ["all"]
-    session.conda_install("channel=conda-forge", "xdoctest[colors]")
+    session.conda_install("--channel=conda-forge", "xdoctest[colors]")
     session.install(".")
     session.run("python", "-m", "xdoctest", package, *args)
 

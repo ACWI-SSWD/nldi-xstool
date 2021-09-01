@@ -66,7 +66,7 @@ class ExtADCPBathy:
 
     def _distance(self: "ExtADCPBathy", p1t: Point, p2t: Point) -> np.float64:
         """Convenience function to calc distance between 2 points."""
-        return np.sqrt(np.sum(np.square(np.array(p2t) - np.array(p1t))))
+        return np.float64(np.sqrt(np.sum(np.square(np.array(p2t) - np.array(p1t)))))
 
     def _buildgeom(self: "ExtADCPBathy") -> None:
         npts = len(self.agdf)
