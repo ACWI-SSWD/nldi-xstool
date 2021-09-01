@@ -1,12 +1,11 @@
 """Tools for extending USGS measured Bathymetry (preliminary)."""
 from pathlib import Path
-from typing import Any
 
 import geopandas as gpd
 import numpy as np
-import numpy.typing as npt
 import pandas as pd
 from geopandas.array import points_from_xy
+from shapely.geometry import Point
 
 from nldi_xstool.nldi_xstool import getxsatendpts
 
@@ -65,9 +64,7 @@ class ExtADCPBathy:
 
         self._buildgeom()
 
-    def _distance(
-        self: "ExtADCPBathy", p1t: npt.NDArray[np.float64], p2t: npt.NDArray[np.float64]
-    ) -> Any:
+    def _distance(self: "ExtADCPBathy", p1t: Point, p2t: Point) -> np.float64:
         """Convenience function to calc distance between 2 points."""
         return np.sqrt(np.sum(np.square(np.array(p2t) - np.array(p1t))))
 

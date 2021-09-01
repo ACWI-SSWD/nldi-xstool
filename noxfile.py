@@ -189,6 +189,8 @@ def docs(session: Session) -> None:
         "sphinx",
         "sphinx-autobuild",
         "sphinx-click",
+    )
+    session.install(
         "sphinx-rtd-theme",
     )
     session.conda_install(".")

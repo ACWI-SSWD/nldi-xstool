@@ -19,30 +19,11 @@ from nldi_xstool.PathGen import PathGen
 from nldi_xstool.XSGen import XSGen
 
 
-# import json
-# import xarray as xr
-# from matplotlib import pyplot as plt
-
-# import os.path as path
-
-
-class HPoint(Point):  # type: ignore
-    """Class for HPoint."""
-
-    def __init__(self: "HPoint", *args, **kwargs):  # type: ignore
-        """Class HPoint class."""
-        super().__init__(*args, **kwargs)
-
-    def __hash__(self: "HPoint"):  # type: ignore
-        """Hash function."""
-        return hash(tuple(self.coords))  # pragma: no cover
-
-
 def dataframe_to_geodataframe(
     df: pd.DataFrame, crs: str
 ) -> gpd.GeoDataFrame:  # noqa D103
     """Convert pandas Dataframe to Geodataframe."""
-    geometry = [HPoint(xy) for xy in zip(df.x, df.y)]
+    geometry = [Point(xy) for xy in zip(df.x, df.y)]
     df = df.drop(["x", "y"], axis=1)
     gdf = gpd.GeoDataFrame(df, geometry=geometry, crs=crs)
     return gdf
