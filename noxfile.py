@@ -78,6 +78,7 @@ def precommit(session: Session) -> None:
     """Lint using pre-commit."""
     args = session.posargs or ["run", "--all-files", "--show-diff-on-failure"]
     session.conda_install(
+        "--channel=conda-forge",
         "black",
         "darglint",
         "flake8",
@@ -96,7 +97,7 @@ def precommit(session: Session) -> None:
 @nox.session(python="3.9", venv_backend="conda")
 def safety(session: Session) -> None:
     """Scan dependencies for insecure packages."""
-    session.conda_install("safety")
+    session.conda_install("--channel=conda-forge", "safety")
     session.install(".")
     session.run("safety", "check", "--full-report")
 
@@ -105,7 +106,7 @@ def safety(session: Session) -> None:
 def mypy(session: Session) -> None:
     """Type-check using mypy."""
     args = session.posargs or ["src", "tests", "docs/conf.py"]
-    session.conda_install("mypy", "pytest", "types-requests")
+    session.conda_install("--channel=conda-forge", "mypy", "pytest", "types-requests")
     session.install(".")
     session.run("mypy", *args)
     if not session.posargs:
@@ -115,7 +116,14 @@ def mypy(session: Session) -> None:
 @nox.session(python=python_versions, venv_backend="conda")
 def tests(session: Session) -> None:
     """Run the test suite."""
-    session.conda_install("coverage[toml]", "pytest", "pygments", "numpy>=1.21.0")
+    session.conda_install(
+        "--channel=conda-forge",
+        "toml",
+        "coverage[toml]",
+        "pytest",
+        "pygments",
+        "numpy>=1.21.0",
+    )
     session.install(".")
     try:
         session.run("coverage", "run", "--parallel", "-m", "pytest", *session.posargs)
@@ -129,7 +137,7 @@ def coverage(session: Session) -> None:
     """Produce the coverage report."""
     args = session.posargs or ["report"]
 
-    session.conda_install("toml", "coverage[toml]")
+    session.conda_install("--channel=conda-forge", "toml", "coverage[toml]")
 
     if not session.posargs and any(Path().glob(".coverage.*")):
         session.run("coverage", "combine")
@@ -140,7 +148,9 @@ def coverage(session: Session) -> None:
 @nox.session(python=python_versions, venv_backend="conda")
 def typeguard(session: Session) -> None:
     """Runtime type checking using Typeguard."""
-    session.conda_install("pytest", "typeguard", "pygments", "numpy>=1.21.0")
+    session.conda_install(
+        "--channel=conda-forge", "pytest", "typeguard", "pygments", "numpy>=1.21.0"
+    )
     session.install(".")
     session.run("pytest", f"--typeguard-packages={package}", *session.posargs)
 
@@ -158,7 +168,9 @@ def xdoctest(session: Session) -> None:
 def docs_build(session: Session) -> None:
     """Build the documentation."""
     args = session.posargs or ["docs", "docs/_build"]
-    session.conda_install("sphinx", "sphinx-click", "sphinx-rtd-theme")
+    session.conda_install(
+        "--channel=conda-forge", "sphinx", "sphinx-click", "sphinx-rtd-theme"
+    )
     session.install(".")
 
     build_dir = Path("docs", "_build")
@@ -173,7 +185,11 @@ def docs(session: Session) -> None:
     """Build and serve the documentation with live reloading on file changes."""
     args = session.posargs or ["--open-browser", "docs", "docs/_build"]
     session.conda_install(
-        "sphinx", "sphinx-autobuild", "sphinx-click", "sphinx-rtd-theme"
+        "channel=conda-forge",
+        "sphinx",
+        "sphinx-autobuild",
+        "sphinx-click",
+        "sphinx-rtd-theme",
     )
     session.conda_install(".")
 
