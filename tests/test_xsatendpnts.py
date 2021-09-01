@@ -44,5 +44,5 @@ def test_run_getxsatendpts(path, numpts, crs, file, res):
         res (float): Resolution of returned cross-section.
     """
     with NamedTemporaryFile(mode="w+") as tf:
-        xs = getxsatendpts(path=path, numpts=numpts, crs=crs, file=tf, res=res)
+        xs = getxsatendpts(path=path, numpts=numpts, crs=crs, file=tf.name, res=res)
         assert xs == 0

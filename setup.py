@@ -30,14 +30,13 @@ test_requirements = [
 setup(
     author="Richard McDonald",
     author_email="rmcd@usgs.gov",
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Natural Language :: English",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
     ],
     description="Generate cross-sections using 3DEP supplied topography.",

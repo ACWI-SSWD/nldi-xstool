@@ -9,7 +9,7 @@ from nox.sessions import Session
 
 
 package = "nldi_xstool"
-python_versions = ["3.9", "3.8"]
+python_versions = ["3.9"]
 nox.needs_version = ">= 2021.6.6"
 nox.options.sessions = (
     "pre-commit",
@@ -124,12 +124,12 @@ def tests(session: Session) -> None:
             session.notify("coverage", posargs=[])
 
 
-@nox.session
+@nox.session(python=python_versions, venv_backend="conda")
 def coverage(session: Session) -> None:
     """Produce the coverage report."""
     args = session.posargs or ["report"]
 
-    session.conda_install("coverage[toml]")
+    session.conda_install("toml", "coverage[toml]")
 
     if not session.posargs and any(Path().glob(".coverage.*")):
         session.run("coverage", "combine")

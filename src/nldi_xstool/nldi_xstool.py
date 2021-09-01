@@ -52,7 +52,7 @@ def getxsatendpts(
     path: List[Tuple[float, float]],
     numpts: int,
     crs: str = "epsg:4326",
-    file: Optional[Any] = None,
+    file: Optional[str] = None,
     res: Optional[int] = 10,
 ) -> Any:
     """Get cross-section at user defined endpoints.
@@ -126,7 +126,7 @@ def getxsatpoint(
     point: List[float],
     numpoints: int,
     width: float,
-    file: Optional[Any] = None,
+    file: Optional[str] = None,
     res: Optional[int] = 10,
 ) -> Any:
     """Get cross-section at user defined point.
@@ -149,6 +149,7 @@ def getxsatpoint(
     [type]
         [description]
     """
+    print(file, type(file))
     # tpoint = f'POINT({point[1]} {point[0]})'
     df = pd.DataFrame(
         {"pointofinterest": ["this"], "Lat": [point[1]], "Lon": [point[0]]}
@@ -185,7 +186,7 @@ def getxsatpoint(
     # gpdsi.set_crs(epsg=3857, inplace=True)
     gpdsi.to_crs(epsg=4326, inplace=True)
     if file:
-        with open(file, "w") as f:
+        with open(str(file), "w") as f:
             f.write(gpdsi.to_json())
             f.close()
         # gpdsi.to_file(file, driver="GeoJSON")
@@ -202,7 +203,7 @@ def __get_cid_from_lonlat(point: List[float]) -> int:
     # print(point)
     pt = __lonlat_to_point(point[0], point[1])
     location = pt.wkt
-    location = f"POyuINT({point[0]} {point[1]})"
+    location = f"POINT({point[0]} {point[1]})"
     base_url = "https://labs.waterdata.usgs.gov/api/nldi/linked-data/comid/position?f=json&coords="
     url = base_url + location
     comid: int = -1

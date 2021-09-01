@@ -3,7 +3,7 @@ name: nldi-xstool
 channels:
   - conda-forge
 dependencies:
-  - python>=3.8
+  - python>=3.9
   - pip
   # Production dependencies defined here (as well as in requirements.txt)
   - numpy>=1.21.0

@@ -110,7 +110,7 @@ def main(ctx: Any, outcrs: str) -> int:
     "-f",
     "--file",
     default=None,
-    type=click.File("w"),
+    type=str,
     help="enter path and filenmae for json ouput",
 )
 @click.option(
@@ -143,7 +143,7 @@ def xsatpoint(
     numpoints: int,
     width: float,
     resolution: str,
-    file: Any,
+    file: str,
     verbose: bool,
 ) -> int:
     """[summary].
@@ -201,9 +201,7 @@ def xsatpoint(
 
 
 @main.command()
-@click.option(
-    "-f", "--file", default=None, type=click.File("w"), help="Output json file"
-)
+@click.option("-f", "--file", default=None, type=str, help="Output json file")
 @click.option(
     "-s",
     "--startpt",
@@ -245,7 +243,7 @@ def xsatendpts(
     crs: str,
     numpoints: int,
     resolution: str,
-    file: Any,
+    file: str,
     verbose: bool,
 ) -> int:
     """bla.
