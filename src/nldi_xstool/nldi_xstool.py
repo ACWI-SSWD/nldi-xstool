@@ -187,7 +187,6 @@ def __get_cid_from_lonlat(point: List[float]) -> str:
     location = f"POINT({point[0]} {point[1]})"
     base_url = "https://labs.waterdata.usgs.gov/api/nldi/linked-data/comid/position?f=json&coords="
     url = base_url + location
-    comid: int = -1
     # print(url)
     try:
         response = requests.get(url)
