@@ -206,4 +206,4 @@ def __get_cid_from_lonlat(point: List[float]) -> str:
     except Exception as ex:  # pragma: no cover
         raise ex
 
-    return comid
+    return str(comid)
