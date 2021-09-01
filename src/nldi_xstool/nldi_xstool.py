@@ -180,7 +180,7 @@ def __lonlat_to_point(lon: float, lat: float) -> Point:  # noqa D103
     return Point(lon, lat)
 
 
-def __get_cid_from_lonlat(point: List[float]) -> int:
+def __get_cid_from_lonlat(point: List[float]) -> str:
     # print(point)
     pt = __lonlat_to_point(point[0], point[1])
     location = pt.wkt
