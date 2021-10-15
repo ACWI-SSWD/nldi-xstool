@@ -117,6 +117,7 @@ def flow_est(wselev, n, slope, staelev, units):  # noqa N806  # pragma: no cover
             (staelev[i - 1], staelev[i]),
             ([staelev[0][0], wselev], [staelev[-1][0], wselev]),
         )
+        #         print(x,y)
         if x >= staelev[i - 1][0] and x <= staelev[i][0] and abs(y - wselev) < 0.01:
             #             print (x,y)
             intersectlist.append((x, y))

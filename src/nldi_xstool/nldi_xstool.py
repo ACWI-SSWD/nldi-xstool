@@ -83,14 +83,20 @@ def getxsatendpts(
     # print('after dem')
     x, y = xs.get_xs_points()
     dsi = dem.interp(x=("z", x), y=("z", y))
-    x1 = dsi.coords["x"].values - dsi.coords["x"].values[0]
-    y1 = dsi.coords["y"].values - dsi.coords["y"].values[0]
-    dist = np.hypot(x1, y1)
+    # dsi2 = dsi.to_crs("epsg:5071")
+    # x1 = dsi.coords["x"].values - dsi.coords["x"].values[0]
+    # y1 = dsi.coords["y"].values - dsi.coords["y"].values[0]
+    # dist = np.hypot(x1, y1)
     pdsi = dsi.to_dataframe()
-    pdsi["distance"] = dist
+    # pdsi["distance"] = dist
 
     # gpdsi = gpd.GeoDataFrame(pdsi, gpd.points_from_xy(pdsi.x.values, pdsi.y.values))
     gpdsi = dataframe_to_geodataframe(pdsi, crs="epsg:3857")
+    # gpdsi.to_crs('epsg:5071', inplace=True)
+    # x1 = gpdsi['geometry'].x.values[0] - gpdsi['geometry'].x.values[:]
+    # y1 = gpdsi['geometry'].y.values[0] - gpdsi['geometry'].y.values[:]
+    # dist = np.hypot(x1, y1)
+    gpdsi["distance"] = _get_dist(gpdsi)
     # gpdsi.set_crs(epsg=3857, inplace=True)
     gpdsi.to_crs(epsg=4326, inplace=True)
     if file:
@@ -101,6 +107,13 @@ def getxsatendpts(
             return 0
     else:
         return gpdsi
+
+
+def _get_dist(gdf: gpd.GeoDataFrame):
+    data = gdf.to_crs(epsg=5071)
+    x1 = data["geometry"].x.values[0] - data["geometry"].x.values[:]
+    y1 = data["geometry"].y.values[0] - data["geometry"].y.values[:]
+    return np.hypot(x1, y1)
 
 
 def getxsatpoint(
@@ -130,7 +143,7 @@ def getxsatpoint(
     [type]
         [description]
     """
-    print(file, type(file))
+    # print(file, type(file))
     # tpoint = f'POINT({point[1]} {point[0]})'
     df = pd.DataFrame(
         {"pointofinterest": ["this"], "Lat": [point[1]], "Lon": [point[0]]}
@@ -156,14 +169,15 @@ def getxsatpoint(
     )
     x, y = xs.get_xs_points()
     dsi = dem.interp(x=("z", x), y=("z", y))
-    x1 = dsi.coords["x"].values - dsi.coords["x"].values[0]
-    y1 = dsi.coords["y"].values - dsi.coords["y"].values[0]
-    dist = np.hypot(x1, y1)
+    # x1 = dsi.coords["x"].values - dsi.coords["x"].values[0]
+    # y1 = dsi.coords["y"].values - dsi.coords["y"].values[0]
+    # dist = np.hypot(x1, y1)
     pdsi = dsi.to_dataframe()
-    pdsi["distance"] = dist
+    # pdsi["distance"] = dist
 
     # gpdsi = gpd.GeoDataFrame(pdsi, gpd.points_from_xy(pdsi.x.values, pdsi.y.values))
     gpdsi = dataframe_to_geodataframe(pdsi, crs="epsg:3857")
+    gpdsi["distance"] = _get_dist(gpdsi)
     # gpdsi.set_crs(epsg=3857, inplace=True)
     gpdsi.to_crs(epsg=4326, inplace=True)
     if file:

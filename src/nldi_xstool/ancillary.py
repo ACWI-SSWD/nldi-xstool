@@ -70,8 +70,8 @@ def get_gage_datum(gagenum: str, verbose: bool = False) -> float:
     if si["alt_datum_cd"].values[0] == "NGVD29":
         # print('conversion')
         url = "https://www.ngs.noaa.gov/api/ncat/llh"
-        lat_str = "lat_va"
-        lon_str = "long_va"
+        lat_str = "dec_lat_va"
+        lon_str = "dec_long_va"
 
         alt_str = "alt_va"
         indatum_str = "coord_datum_cd"
@@ -92,8 +92,8 @@ def get_gage_datum(gagenum: str, verbose: bool = False) -> float:
             tmplonstr = tstr + str(tmplonstr)
 
         payload = {
-            "lat": f"N{si[lat_str].values[0]}",
-            "lon": f"W{tmplonstr}",
+            "lat": f"{si[lat_str].values[0]}",
+            "lon": f"{tmplonstr}",
             "orthoHt": repr(ohgt),
             "inDatum": indatum,
             "outDatum": outdatum_str,
